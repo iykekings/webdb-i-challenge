@@ -16,6 +16,11 @@ const addAccount = ({ name, budget }) =>
   db('accounts')
     .insert({ name, budget })
     .then(([id]) => getAccountById(id));
+const updateAccount = (id, { name, budget }) =>
+  db('accounts')
+    .where({ id })
+    .update({ name, budget })
+    .then(count => (count > 0 ? getAccountById(id) : null));
 // end db helpers
 
 server.get('/accounts', async (req, res) => {
@@ -59,6 +64,20 @@ server.post('/accounts', async (req, res) => {
     if (name && budget) {
       const newAccount = await addAccount({ name, budget });
       res.status(201).json(newAccount);
+    } else {
+      res.status(400).json({ error: 'Please provide name and budget' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Couldn't add the account" });
+  }
+});
+server.put('/accounts/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, budget } = req.body;
+  try {
+    if (name && budget) {
+      const updatedAccount = await updateAccount(id, { name, budget });
+      res.status(200).json(updatedAccount);
     } else {
       res.status(400).json({ error: 'Please provide name and budget' });
     }
