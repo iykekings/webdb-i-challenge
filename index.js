@@ -2,6 +2,7 @@ const server = require('./server.js');
 const db = require('./data/dbConfig');
 
 const PORT = process.env.PORT || 4000;
+
 // db helpers
 const getAccounts = () => db('accounts');
 const getAccountById = id =>
